@@ -57,6 +57,6 @@ def write_chunk_to_file(output_file, header, chunk):
 
 if __name__ == "__main__": 
     
-    input_file = 'output.csv'
+    input_file = input("Enter File: ")
     chunk_size = 1000000  # Number of rows per chunk
     chunk_large_csv(input_file, chunk_size)
