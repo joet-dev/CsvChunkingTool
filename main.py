@@ -2,31 +2,25 @@ import csv
 import os
 
 def chunk_large_csv(input_file, chunk_size):
-    # Create a directory to store the chunks if it doesn't exist
     output_dir = 'chunks'
     os.makedirs(output_dir, exist_ok=True)
 
-    # List of encodings to try
-    encodings = ['utf-8', 'cp1252', 'latin1']  # Add more encodings if needed
+    encodings = ['utf-8', 'cp1252', 'latin1'] 
 
     for encoding in encodings:
         try:
-            # Open the input CSV file for reading with the current encoding
             with open(input_file, 'r', newline='', encoding=encoding) as csvfile:
                 reader = csv.reader(csvfile)
-                header = next(reader)  # Read the header row
+                header = next(reader)
 
-                # Initialize variables
                 count = 1
                 rows_written = 0
                 chunk = []
 
                 for row in reader:
-                    # Append row to the chunk list
                     chunk.append(row)
                     rows_written += 1
 
-                    # If the chunk size is reached, write the chunk to a new file
                     if rows_written >= chunk_size:
                         output_file = os.path.join(output_dir, f'{os.path.splitext(input_file)[0]}_{count}.csv')
                         write_chunk_to_file(output_file, header, chunk)
@@ -34,12 +28,9 @@ def chunk_large_csv(input_file, chunk_size):
                         rows_written = 0
                         chunk = []
 
-                # Write the remaining chunk to a file if any rows left
                 if chunk:
                     output_file = os.path.join(output_dir, f'{os.path.splitext(input_file)[0]}_{count}.csv')
                     write_chunk_to_file(output_file, header, chunk)
-
-            # If no exception is raised, break out of the loop
             break
 
         except UnicodeDecodeError:
@@ -57,6 +48,14 @@ def write_chunk_to_file(output_file, header, chunk):
 
 if __name__ == "__main__": 
     
-    input_file = input("Enter File: ")
-    chunk_size = 1000000  # Number of rows per chunk
+    input_file = input("Enter CSV path: ")
+    if input_file.strip() == "": 
+        print("No CSV file provided.")
+    elif not os.path.exists(input_file):
+        print("The file provided doesn't exist.")
+    elif os.path.splitext(input_file) != ".csv": 
+        print("The file provided is not a CSV file.")
+
+    chunk_size = input("Enter the maximum number of rows in each chunked CSV: ") 
+    
     chunk_large_csv(input_file, chunk_size)
