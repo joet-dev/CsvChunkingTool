@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 
 def chunk_large_csv(input_file, chunk_size):
     output_dir = 'chunks'
@@ -49,13 +50,21 @@ def write_chunk_to_file(output_file, header, chunk):
 if __name__ == "__main__": 
     
     input_file = input("Enter CSV path: ")
+
     if input_file.strip() == "": 
         print("No CSV file provided.")
+        sys.exit(1)
     elif not os.path.exists(input_file):
         print("The file provided doesn't exist.")
-    elif os.path.splitext(input_file) != ".csv": 
+        sys.exit(1)
+    elif os.path.splitext(input_file)[1].lower() != ".csv": 
         print("The file provided is not a CSV file.")
+        sys.exit(1)
 
     chunk_size = input("Enter the maximum number of rows in each chunked CSV: ") 
     
-    chunk_large_csv(input_file, chunk_size)
+    if not chunk_size.isdigit(): 
+        print("The input is not an integer.")
+        sys.exit(1)
+
+    chunk_large_csv(input_file, int(chunk_size))
